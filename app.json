@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Goftaan",
+    "slug": "goftaan",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app records meeting audio to create transcripts and summaries."
+      }
+    },
+    "android": {
+      "permissions": [
+        "READ_CALENDAR",
+        "RECORD_AUDIO"
+      ],
+      "package": "com.goftaan.app"
+    },
+    "plugins": [
+      "expo-calendar"
+    ]
+  }
+}
