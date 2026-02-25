@@ -1,8 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Linking,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -19,12 +21,45 @@ import type { AppStackParamList } from '../../../core/navigation/types';
 import { CenteredState } from '../../../shared/components/CenteredState';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
+import { manualMeetingsService } from '../services/manualMeetingsService';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'MeetingsList'>;
 
 export const MeetingsListScreen = ({ navigation }: Props) => {
   const { status, meetings, errorMessage, isRefreshing, refresh } = useMeetings();
   const { logout } = useAuth();
+
+  const runDeleteMeeting = (meetingId: string) => {
+    const remove = async () => {
+      try {
+        await manualMeetingsService.removeMeeting(meetingId);
+        await refresh();
+      } catch {
+        Alert.alert('خطا', 'حذف جلسه انجام نشد. دوباره تلاش کنید.');
+      }
+    };
+
+    void remove();
+  };
+
+  const handleDeleteMeeting = (meetingId: string) => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const ok = window.confirm('آیا از حذف این جلسه مطمئن هستید؟');
+      if (ok) {
+        runDeleteMeeting(meetingId);
+      }
+      return;
+    }
+
+    Alert.alert('حذف جلسه', 'آیا از حذف این جلسه مطمئن هستید؟', [
+      { text: 'انصراف', style: 'cancel' },
+      {
+        text: 'حذف',
+        style: 'destructive',
+        onPress: () => runDeleteMeeting(meetingId),
+      },
+    ]);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -131,6 +166,13 @@ export const MeetingsListScreen = ({ navigation }: Props) => {
             <MeetingCard
               meeting={item}
               onPress={(meeting) => navigation.navigate('MeetingDetail', { meeting })}
+              onDeletePress={
+                item.source === 'manual'
+                  ? (meeting) => {
+                      handleDeleteMeeting(meeting.id);
+                    }
+                  : undefined
+              }
             />
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}

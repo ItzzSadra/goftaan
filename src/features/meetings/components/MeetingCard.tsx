@@ -8,9 +8,10 @@ import { typography } from '../../../shared/theme/typography';
 type MeetingCardProps = {
   meeting: Meeting;
   onPress: (meeting: Meeting) => void;
+  onDeletePress?: (meeting: Meeting) => void;
 };
 
-export const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
+export const MeetingCard = ({ meeting, onPress, onDeletePress }: MeetingCardProps) => {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]} onPress={() => onPress(meeting)}>
       <View style={styles.accentBar} />
@@ -22,6 +23,19 @@ export const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
       </View>
       <Text style={styles.time}>{formatMeetingTime(meeting.startDateISO, meeting.endDateISO)}</Text>
       {meeting.location ? <Text style={styles.location}>{meeting.location}</Text> : null}
+      {onDeletePress ? (
+        <View style={styles.actionsRow}>
+          <Pressable
+            style={styles.deleteButton}
+            onPress={(event) => {
+              event.stopPropagation();
+              onDeletePress(meeting);
+            }}
+          >
+            <Text style={styles.deleteButtonText}>حذف</Text>
+          </Pressable>
+        </View>
+      ) : null}
     </Pressable>
   );
 };
@@ -81,6 +95,24 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 14,
     color: colors.accentDark,
+    fontFamily: typography.bold,
+  },
+  actionsRow: {
+    marginTop: 6,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  deleteButton: {
+    borderWidth: 1,
+    borderColor: '#E7B8B4',
+    backgroundColor: '#FFF2F0',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  deleteButtonText: {
+    color: colors.danger,
+    fontSize: 13,
     fontFamily: typography.bold,
   },
   badge: {

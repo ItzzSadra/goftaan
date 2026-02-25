@@ -4,6 +4,7 @@ import type { Meeting } from '../models/meeting';
 import { calendarService } from '../services/calendarService';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 import { isDesktopWeb } from '../../../shared/utils/platform';
+import { useAuth } from '../../auth/context/AuthContext';
 
 type Status = 'idle' | 'loading' | 'ready' | 'permissionDenied' | 'error';
 
@@ -15,7 +16,7 @@ type UseMeetingsResult = {
   refresh: () => Promise<void>;
 };
 
-const defaultError = 'بارگذاری جلسه‌های تقویم انجام نشد. دوباره تلاش کنید.';
+const defaultError = 'بارگذاری جلسه‌ها انجام نشد. دوباره تلاش کنید.';
 const mergeMeetings = (calendarMeetings: Meeting[], manualMeetings: Meeting[]): Meeting[] => {
   const byId = new Map<string, Meeting>();
 
@@ -29,6 +30,7 @@ const mergeMeetings = (calendarMeetings: Meeting[], manualMeetings: Meeting[]): 
 };
 
 export const useMeetings = (): UseMeetingsResult => {
+  const { user } = useAuth();
   const [status, setStatus] = useState<Status>('idle');
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -43,8 +45,17 @@ export const useMeetings = (): UseMeetingsResult => {
       }
       setErrorMessage(null);
 
+      if (!user) {
+        setMeetings([]);
+        setStatus('ready');
+        if (!isInitialLoad) {
+          setIsRefreshing(false);
+        }
+        return;
+      }
+
       if (isDesktopWeb()) {
-        const manualMeetings = await manualMeetingsService.getMeetings();
+        const manualMeetings = await manualMeetingsService.getMeetings(user.id);
         setMeetings(mergeMeetings([], manualMeetings));
         setStatus('ready');
         if (!isInitialLoad) {
@@ -55,7 +66,7 @@ export const useMeetings = (): UseMeetingsResult => {
 
       const [result, manualMeetings] = await Promise.all([
         calendarService.fetchUpcomingMeetings(),
-        manualMeetingsService.getMeetings(),
+        manualMeetingsService.getMeetings(user.id),
       ]);
 
       if (result.permission !== 'granted') {
@@ -83,7 +94,7 @@ export const useMeetings = (): UseMeetingsResult => {
         setErrorMessage(defaultError);
       }
     }
-  }, []);
+  }, [user]);
 
   const refresh = useCallback(async () => {
     await loadMeetings(false);

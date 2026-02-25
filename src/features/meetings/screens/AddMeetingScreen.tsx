@@ -15,6 +15,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '../../../core/navigation/types';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
+import { useAuth } from '../../auth/context/AuthContext';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'AddMeeting'>;
@@ -65,6 +66,7 @@ const parseLocalDateTime = (dateText: string, timeText: string): Date | null => 
 };
 
 export const AddMeetingScreen = ({ navigation }: Props) => {
+  const { user } = useAuth();
   const defaults = useMemo(buildDefaults, []);
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
@@ -102,10 +104,16 @@ export const AddMeetingScreen = ({ navigation }: Props) => {
     const end = new Date(start.getTime() + duration * 60 * 1000);
 
     try {
+      if (!user) {
+        setError('کاربر وارد نشده است.');
+        return;
+      }
+
       setIsSaving(true);
       setError(null);
 
       await manualMeetingsService.addMeeting({
+        userId: user.id,
         title: cleanTitle,
         location,
         notes,
