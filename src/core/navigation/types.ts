@@ -1,6 +1,6 @@
 import type { Meeting } from '../../features/meetings/models/meeting';
 
-export type RootStackParamList = {
+export type AppStackParamList = {
   MeetingsList: undefined;
   AddMeeting: undefined;
   MeetingDetail: {
@@ -9,4 +9,8 @@ export type RootStackParamList = {
   Recording: {
     meeting: Meeting;
   };
+};
+
+export type AuthStackParamList = {
+  Login: undefined;
 };

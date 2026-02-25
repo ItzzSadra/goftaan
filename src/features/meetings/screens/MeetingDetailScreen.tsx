@@ -3,13 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Calendar from 'expo-calendar';
 
-import type { RootStackParamList } from '../../../core/navigation/types';
+import type { AppStackParamList } from '../../../core/navigation/types';
 import { formatMeetingTime } from '../../../shared/utils/date';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'MeetingDetail'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'MeetingDetail'>;
 
 export const MeetingDetailScreen = ({ route, navigation }: Props) => {
   const { meeting } = route.params;

@@ -14,15 +14,17 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { MeetingCard } from '../components/MeetingCard';
 import { useMeetings } from '../hooks/useMeetings';
-import type { RootStackParamList } from '../../../core/navigation/types';
+import { useAuth } from '../../auth/context/AuthContext';
+import type { AppStackParamList } from '../../../core/navigation/types';
 import { CenteredState } from '../../../shared/components/CenteredState';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'MeetingsList'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'MeetingsList'>;
 
 export const MeetingsListScreen = ({ navigation }: Props) => {
   const { status, meetings, errorMessage, isRefreshing, refresh } = useMeetings();
+  const { logout } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
@@ -100,6 +102,9 @@ export const MeetingsListScreen = ({ navigation }: Props) => {
           </Pressable>
           <Pressable style={styles.refreshButton} onPress={() => void refresh()}>
             <Text style={styles.refreshButtonText}>تازه‌سازی</Text>
+          </Pressable>
+          <Pressable style={styles.logoutButton} onPress={() => void logout()}>
+            <Text style={styles.logoutButtonText}>خروج</Text>
           </Pressable>
         </View>
       </View>
@@ -184,16 +189,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   refreshButton: {
-    flex: 1,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.backgroundAccent,
     borderRadius: 12,
     paddingVertical: 12,
+    paddingHorizontal: 14,
     alignItems: 'center',
   },
   refreshButtonText: {
     color: colors.textPrimary,
+    fontFamily: typography.bold,
+    fontSize: 14,
+  },
+  logoutButton: {
+    borderWidth: 1,
+    borderColor: colors.danger,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: colors.danger,
     fontFamily: typography.bold,
     fontSize: 14,
   },

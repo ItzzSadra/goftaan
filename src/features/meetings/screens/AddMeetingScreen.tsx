@@ -12,12 +12,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { RootStackParamList } from '../../../core/navigation/types';
+import type { AppStackParamList } from '../../../core/navigation/types';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'AddMeeting'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'AddMeeting'>;
 
 const pad = (value: number): string => String(value).padStart(2, '0');
 

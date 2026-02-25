@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 
-import type { RootStackParamList } from '../../../core/navigation/types';
+import type { AppStackParamList } from '../../../core/navigation/types';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 import { formatDuration, formatMeetingTime } from '../../../shared/utils/date';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import type { RecordingStatus } from '../models/recording';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Recording'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'Recording'>;
 
 const canStop = (status: RecordingStatus): boolean => status === 'recording' || status === 'paused';
 

@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 
 import { RootNavigator } from './navigation/RootNavigator';
+import { AuthProvider } from '../features/auth/context/AuthContext';
 
 if (!I18nManager.isRTL) {
   I18nManager.allowRTL(true);
@@ -22,8 +23,10 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <RootNavigator />
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <RootNavigator />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 };
