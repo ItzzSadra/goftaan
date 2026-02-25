@@ -12,7 +12,8 @@ type MeetingCardProps = {
 
 export const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
   return (
-    <Pressable style={styles.card} onPress={() => onPress(meeting)}>
+    <Pressable style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]} onPress={() => onPress(meeting)}>
+      <View style={styles.accentBar} />
       <View style={styles.row}>
         <Text style={styles.title}>{meeting.title}</Text>
         <View style={[styles.badge, meeting.source === 'manual' ? styles.badgeManual : styles.badgeCalendar]}>
@@ -27,26 +28,38 @@ export const MeetingCard = ({ meeting, onPress }: MeetingCardProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 16,
-    gap: 8,
+    gap: 10,
+    overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: '#0F172A',
-        shadowOpacity: 0.06,
-        shadowRadius: 10,
-        shadowOffset: { width: 0, height: 4 },
+        shadowColor: colors.shadow,
+        shadowOpacity: 0.08,
+        shadowRadius: 14,
+        shadowOffset: { width: 0, height: 8 },
       },
       android: {
-        elevation: 2,
+        elevation: 3,
       },
       web: {
-        boxShadow: '0px 4px 10px rgba(15, 23, 42, 0.06)',
+        boxShadow: '0px 8px 16px rgba(13, 26, 20, 0.08)',
       },
     }),
+  },
+  cardPressed: {
+    transform: [{ scale: 0.985 }],
+  },
+  accentBar: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: 4,
+    backgroundColor: colors.accent,
   },
   row: {
     flexDirection: 'row',
@@ -55,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 17,
+    fontSize: 18,
     fontFamily: typography.bold,
     color: colors.textPrimary,
     flex: 1,
@@ -67,7 +80,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 14,
-    color: colors.accent,
+    color: colors.accentDark,
     fontFamily: typography.bold,
   },
   badge: {
@@ -79,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentSoft,
   },
   badgeManual: {
-    backgroundColor: '#DCFCE7',
+    backgroundColor: '#DBF2E3',
   },
   badgeText: {
     fontSize: 11,

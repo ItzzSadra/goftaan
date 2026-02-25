@@ -13,9 +13,11 @@ type CenteredStateProps = {
 export const CenteredState = ({ title, description, action }: CenteredStateProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      {description ? <Text style={styles.description}>{description}</Text> : null}
-      {action}
+      <View style={styles.card}>
+        <Text style={styles.title}>{title}</Text>
+        {description ? <Text style={styles.description}>{description}</Text> : null}
+        {action}
+      </View>
     </View>
   );
 };
@@ -25,8 +27,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
+  },
+  card: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceElevated,
+    padding: 18,
     gap: 10,
+    alignItems: 'center',
   },
   title: {
     fontSize: 20,

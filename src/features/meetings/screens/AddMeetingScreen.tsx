@@ -134,8 +134,11 @@ export const AddMeetingScreen = ({ navigation }: Props) => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>افزودن جلسه</Text>
-          <Text style={styles.subtitle}>یک جلسه دستی برای ضبط و پیاده‌سازی بسازید.</Text>
+          <View style={styles.heroCard}>
+            <Text style={styles.heroKicker}>جلسه جدید</Text>
+            <Text style={styles.title}>افزودن جلسه</Text>
+            <Text style={styles.subtitle}>یک جلسه دستی برای ضبط و پیاده‌سازی بسازید.</Text>
+          </View>
 
           <View style={styles.formCard}>
           <Text style={styles.label}>عنوان</Text>
@@ -220,13 +223,27 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingBottom: 24,
     gap: 12,
     flexGrow: 1,
   },
   scroll: {
     flex: 1,
+  },
+  heroCard: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 20,
+    backgroundColor: colors.surfaceElevated,
+    padding: 16,
+    gap: 4,
+  },
+  heroKicker: {
+    fontSize: 11,
+    fontFamily: typography.bold,
+    letterSpacing: 0.9,
+    color: colors.accentDark,
   },
   title: {
     fontSize: 28,
@@ -239,12 +256,12 @@ const styles = StyleSheet.create({
     fontFamily: typography.regular,
   },
   formCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
-    padding: 14,
-    gap: 8,
+    borderRadius: 20,
+    padding: 16,
+    gap: 9,
   },
   label: {
     color: colors.textPrimary,
@@ -255,12 +272,12 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: 12,
-    paddingVertical: 11,
+    paddingVertical: 12,
     fontSize: 15,
     color: colors.textPrimary,
-    backgroundColor: colors.backgroundAccent,
+    backgroundColor: '#F8F4EB',
     fontFamily: typography.regular,
     textAlign: 'right',
   },
@@ -285,7 +302,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     backgroundColor: colors.accent,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 13,
     alignItems: 'center',
   },
@@ -296,8 +313,8 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
     paddingVertical: 13,

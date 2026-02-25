@@ -7,6 +7,7 @@ import type { AppStackParamList } from '../../../core/navigation/types';
 import { formatMeetingTime } from '../../../shared/utils/date';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
+import { isDesktopWeb } from '../../../shared/utils/platform';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'MeetingDetail'>;
@@ -26,6 +27,10 @@ export const MeetingDetailScreen = ({ route, navigation }: Props) => {
               if (meeting.source === 'manual') {
                 await manualMeetingsService.removeMeeting(meeting.id);
               } else {
+                if (isDesktopWeb()) {
+                  Alert.alert('غیرفعال در نسخه دسکتاپ وب', 'در نسخه دسکتاپ وب، قابلیت تقویم غیرفعال است.');
+                  return;
+                }
                 const permission = await Calendar.requestCalendarPermissionsAsync();
                 if (permission.status !== 'granted') {
                   Alert.alert('دسترسی لازم است', 'برای حذف جلسه تقویمی، اجازه دسترسی تقویم را فعال کنید.');
@@ -49,6 +54,7 @@ export const MeetingDetailScreen = ({ route, navigation }: Props) => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
         <View style={styles.headerCard}>
+          <Text style={styles.kicker}>جزئیات جلسه</Text>
           <Text style={styles.title}>{meeting.title}</Text>
           <Text style={styles.meta}>{formatMeetingTime(meeting.startDateISO, meeting.endDateISO)}</Text>
           {meeting.location ? <Text style={styles.meta}>محل: {meeting.location}</Text> : null}
@@ -89,18 +95,24 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    gap: 12,
+    gap: 14,
   },
   headerCard: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
-    backgroundColor: colors.surface,
-    padding: 16,
+    borderRadius: 20,
+    backgroundColor: colors.surfaceElevated,
+    padding: 18,
     gap: 8,
   },
+  kicker: {
+    fontSize: 11,
+    letterSpacing: 0.9,
+    color: colors.accentDark,
+    fontFamily: typography.bold,
+  },
   title: {
-    fontSize: 27,
+    fontSize: 29,
     fontFamily: typography.bold,
     color: colors.textPrimary,
   },
@@ -136,8 +148,8 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 16,
-    backgroundColor: colors.backgroundAccent,
+    borderRadius: 20,
+    backgroundColor: colors.surfaceElevated,
     padding: 16,
     gap: 10,
   },
@@ -154,8 +166,8 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     marginTop: 4,
-    backgroundColor: colors.accent,
-    borderRadius: 12,
+    backgroundColor: colors.accentDark,
+    borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 12,
     alignItems: 'center',
@@ -168,7 +180,7 @@ const styles = StyleSheet.create({
   dangerButton: {
     marginTop: 4,
     backgroundColor: colors.danger,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 12,
     alignItems: 'center',

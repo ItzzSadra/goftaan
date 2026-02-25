@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Meeting } from '../models/meeting';
 import { calendarService } from '../services/calendarService';
 import { manualMeetingsService } from '../services/manualMeetingsService';
+import { isDesktopWeb } from '../../../shared/utils/platform';
 
 type Status = 'idle' | 'loading' | 'ready' | 'permissionDenied' | 'error';
 
@@ -41,6 +42,16 @@ export const useMeetings = (): UseMeetingsResult => {
         setIsRefreshing(true);
       }
       setErrorMessage(null);
+
+      if (isDesktopWeb()) {
+        const manualMeetings = await manualMeetingsService.getMeetings();
+        setMeetings(mergeMeetings([], manualMeetings));
+        setStatus('ready');
+        if (!isInitialLoad) {
+          setIsRefreshing(false);
+        }
+        return;
+      }
 
       const [result, manualMeetings] = await Promise.all([
         calendarService.fetchUpcomingMeetings(),

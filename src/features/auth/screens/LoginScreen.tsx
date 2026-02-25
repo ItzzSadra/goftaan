@@ -61,10 +61,17 @@ export const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.bgOrbTop} />
+      <View style={styles.bgOrbBottom} />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        <View style={styles.brandRow}>
+          <Text style={styles.brandDot}>●</Text>
+          <Text style={styles.brandText}>Goftaan</Text>
+        </View>
+
         <View style={styles.card}>
           <Text style={styles.kicker}>گفتان</Text>
           <Text style={styles.title}>{isSignupMode ? 'ساخت حساب کاربری' : 'ورود کاربر'}</Text>
@@ -73,6 +80,29 @@ export const LoginScreen = () => {
               ? 'برای شروع، نام، ایمیل و رمز عبور را وارد کنید.'
               : 'برای دسترسی به برنامه، ایمیل و رمز عبور خود را وارد کنید.'}
           </Text>
+
+          <View style={styles.modeSwitch}>
+            <Pressable
+              style={[styles.modeTab, !isSignupMode ? styles.modeTabActive : null]}
+              onPress={() => {
+                setMode('login');
+                setErrorMessage(null);
+              }}
+              disabled={isSubmitting}
+            >
+              <Text style={[styles.modeTabText, !isSignupMode ? styles.modeTabTextActive : null]}>ورود</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.modeTab, isSignupMode ? styles.modeTabActive : null]}
+              onPress={() => {
+                setMode('signup');
+                setErrorMessage(null);
+              }}
+              disabled={isSubmitting}
+            >
+              <Text style={[styles.modeTabText, isSignupMode ? styles.modeTabTextActive : null]}>ثبت‌نام</Text>
+            </Pressable>
+          </View>
 
           <View style={styles.form}>
             {isSignupMode ? (
@@ -129,18 +159,6 @@ export const LoginScreen = () => {
               <Text style={styles.loginButtonText}>{isSignupMode ? 'ثبت‌نام' : 'ورود'}</Text>
             )}
           </Pressable>
-
-          <Pressable
-            onPress={() => {
-              setMode((prevMode) => (prevMode === 'login' ? 'signup' : 'login'));
-              setErrorMessage(null);
-            }}
-            disabled={isSubmitting}
-          >
-            <Text style={styles.switchMode}>
-              {isSignupMode ? 'حساب دارید؟ ورود' : 'حساب ندارید؟ ثبت‌نام'}
-            </Text>
-          </Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -152,27 +170,63 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  bgOrbTop: {
+    position: 'absolute',
+    top: -90,
+    right: -70,
+    width: 220,
+    height: 220,
+    borderRadius: 120,
+    backgroundColor: colors.accentSoft,
+  },
+  bgOrbBottom: {
+    position: 'absolute',
+    bottom: -100,
+    left: -80,
+    width: 250,
+    height: 250,
+    borderRadius: 140,
+    backgroundColor: '#EFE3CC',
+  },
   keyboardContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
+    padding: 20,
+    gap: 14,
   },
-  card: {
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    padding: 18,
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
+  brandDot: {
+    color: colors.accentDark,
+    fontSize: 18,
+    lineHeight: 20,
+  },
+  brandText: {
+    color: colors.textPrimary,
+    fontFamily: typography.bold,
+    fontSize: 16,
+    letterSpacing: 0.4,
+  },
+  card: {
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceElevated,
+    padding: 20,
+    gap: 10,
+  },
   kicker: {
-    fontSize: 12,
-    color: colors.accent,
-    letterSpacing: 0.8,
+    fontSize: 11,
+    color: colors.accentDark,
+    letterSpacing: 1,
     fontFamily: typography.bold,
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     color: colors.textPrimary,
     fontFamily: typography.bold,
   },
@@ -181,10 +235,37 @@ const styles = StyleSheet.create({
     fontFamily: typography.regular,
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 8,
+    marginBottom: 6,
+  },
+  modeSwitch: {
+    marginTop: 6,
+    flexDirection: 'row',
+    borderRadius: 13,
+    backgroundColor: colors.backgroundAccent,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 4,
+  },
+  modeTab: {
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingVertical: 9,
+  },
+  modeTabActive: {
+    backgroundColor: colors.surfaceElevated,
+  },
+  modeTabText: {
+    color: colors.textSecondary,
+    fontFamily: typography.bold,
+    fontSize: 13,
+  },
+  modeTabTextActive: {
+    color: colors.textPrimary,
   },
   form: {
-    gap: 8,
+    gap: 7,
+    marginTop: 2,
   },
   label: {
     color: colors.textPrimary,
@@ -192,20 +273,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   input: {
-    height: 46,
+    height: 48,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
-    backgroundColor: colors.backgroundAccent,
-    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: '#F7F2E8',
+    paddingHorizontal: 14,
     color: colors.textPrimary,
     fontFamily: typography.regular,
     fontSize: 14,
   },
   loginButton: {
-    marginTop: 12,
-    height: 48,
-    borderRadius: 12,
+    marginTop: 14,
+    height: 50,
+    borderRadius: 14,
     backgroundColor: colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
@@ -221,12 +302,5 @@ const styles = StyleSheet.create({
     fontFamily: typography.regular,
     fontSize: 13,
     textAlign: 'left',
-  },
-  switchMode: {
-    marginTop: 8,
-    textAlign: 'center',
-    color: colors.accent,
-    fontFamily: typography.bold,
-    fontSize: 14,
   },
 });

@@ -93,9 +93,16 @@ export const MeetingsListScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.headerCard}>
-        <Text style={styles.kicker}>گفتان</Text>
-        <Text style={styles.title}>جلسه‌های پیش رو</Text>
-        <Text style={styles.subtitle}>یک جلسه را برای ضبط، پیاده‌سازی و خلاصه انتخاب کنید.</Text>
+        <View style={styles.headerTopRow}>
+          <View>
+            <Text style={styles.kicker}>داشبورد</Text>
+            <Text style={styles.title}>جلسه‌های پیش رو</Text>
+          </View>
+          <View style={styles.counterChip}>
+            <Text style={styles.counterChipText}>{meetings.length} جلسه</Text>
+          </View>
+        </View>
+        <Text style={styles.subtitle}>جلسه موردنظر را انتخاب کنید تا ضبط، پیاده‌سازی و خلاصه را شروع کنید.</Text>
         <View style={styles.headerActions}>
           <Pressable style={styles.addButton} onPress={() => navigation.navigate('AddMeeting')}>
             <Text style={styles.addButtonText}>+ افزودن جلسه</Text>
@@ -146,19 +153,38 @@ const styles = StyleSheet.create({
   headerCard: {
     marginHorizontal: 16,
     marginTop: 10,
-    marginBottom: 8,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 18,
-    backgroundColor: colors.backgroundAccent,
-    padding: 16,
-    gap: 6,
+    borderRadius: 22,
+    backgroundColor: colors.surfaceElevated,
+    padding: 18,
+    gap: 8,
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  counterChip: {
+    borderWidth: 1,
+    borderColor: '#BFD9D6',
+    backgroundColor: colors.accentSoft,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  counterChipText: {
+    color: colors.accentDark,
+    fontSize: 12,
+    fontFamily: typography.bold,
   },
   kicker: {
-    fontSize: 12,
-    color: colors.accent,
+    fontSize: 11,
+    color: colors.accentDark,
     fontFamily: typography.bold,
-    letterSpacing: 0.8,
+    letterSpacing: 0.9,
   },
   title: {
     fontSize: 30,
@@ -173,13 +199,14 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     marginTop: 8,
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     gap: 10,
+    flexWrap: 'wrap',
   },
   addButton: {
     flex: 1,
     backgroundColor: colors.accent,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 12,
     alignItems: 'center',
   },
@@ -191,8 +218,8 @@ const styles = StyleSheet.create({
   refreshButton: {
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.backgroundAccent,
-    borderRadius: 12,
+    backgroundColor: '#F7F3E9',
+    borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 14,
     alignItems: 'center',
@@ -204,9 +231,9 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     borderWidth: 1,
-    borderColor: colors.danger,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderColor: '#E7B8B4',
+    backgroundColor: '#FFF2F0',
+    borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 14,
     alignItems: 'center',
@@ -224,10 +251,10 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 18,
+    paddingBottom: 26,
   },
   separator: {
-    height: 10,
+    height: 12,
   },
   stateActionsRow: {
     flexDirection: 'row',

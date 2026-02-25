@@ -50,8 +50,11 @@ export const RecordingScreen = ({ route, navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
-        <Text style={styles.title}>{meeting.title}</Text>
-        <Text style={styles.meta}>{formatMeetingTime(meeting.startDateISO, meeting.endDateISO)}</Text>
+        <View style={styles.heroCard}>
+          <Text style={styles.heroKicker}>استودیو ضبط</Text>
+          <Text style={styles.title}>{meeting.title}</Text>
+          <Text style={styles.meta}>{formatMeetingTime(meeting.startDateISO, meeting.endDateISO)}</Text>
+        </View>
 
         <View style={styles.timerCard}>
           <Text style={styles.timerLabel}>مدت ضبط</Text>
@@ -202,8 +205,22 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 14,
   },
+  heroCard: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 20,
+    padding: 16,
+    gap: 6,
+    backgroundColor: colors.surfaceElevated,
+  },
+  heroKicker: {
+    fontSize: 11,
+    color: colors.accentDark,
+    letterSpacing: 0.9,
+    fontFamily: typography.bold,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: typography.bold,
     color: colors.textPrimary,
   },
@@ -215,8 +232,8 @@ const styles = StyleSheet.create({
   timerCard: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 14,
-    backgroundColor: colors.surface,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceElevated,
     padding: 18,
     gap: 8,
   },
@@ -232,14 +249,14 @@ const styles = StyleSheet.create({
   },
   stateText: {
     fontSize: 14,
-    color: colors.accent,
+    color: colors.accentDark,
     fontFamily: typography.bold,
   },
   messageCard: {
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
+    borderRadius: 16,
+    backgroundColor: colors.surfaceElevated,
     padding: 14,
     gap: 10,
   },
@@ -296,8 +313,8 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     flex: 1,
-    backgroundColor: colors.accent,
-    borderRadius: 10,
+    backgroundColor: colors.accentDark,
+    borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 13,
     alignItems: 'center',
@@ -314,10 +331,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
+    borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 13,
-    backgroundColor: colors.surface,
+    backgroundColor: '#F8F4EB',
     alignItems: 'center',
   },
   secondaryButtonText: {
@@ -328,7 +345,7 @@ const styles = StyleSheet.create({
   },
   dangerButton: {
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 13,
     backgroundColor: colors.danger,
