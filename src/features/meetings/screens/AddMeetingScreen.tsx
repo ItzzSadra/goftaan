@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -16,6 +16,7 @@ import type { AppStackParamList } from '../../../core/navigation/types';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 import { useAuth } from '../../auth/context/AuthContext';
+import { settingsService } from '../../settings/services/settingsService';
 import { manualMeetingsService } from '../services/manualMeetingsService';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'AddMeeting'>;
@@ -76,6 +77,15 @@ export const AddMeetingScreen = ({ navigation }: Props) => {
   const [durationText, setDurationText] = useState('45');
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const loadDefaultDuration = async () => {
+      const appSettings = await settingsService.getAppSettings();
+      setDurationText(String(appSettings.defaultMeetingDurationMinutes));
+    };
+
+    void loadDefaultDuration();
+  }, []);
 
   const onSave = async () => {
     const cleanTitle = title.trim();

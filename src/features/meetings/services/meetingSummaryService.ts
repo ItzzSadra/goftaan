@@ -124,5 +124,38 @@ export const meetingSummaryService = {
 
     return toMeetingSummary(data[0]);
   },
-};
 
+  async getSummariesByMeetingIds(meetingIds: string[]): Promise<MeetingSummary[]> {
+    if (meetingIds.length === 0) {
+      return [];
+    }
+
+    const inFilter = `(${meetingIds.map((id) => `"${id}"`).join(',')})`;
+    const params = new URLSearchParams({
+      select: 'id,meeting_id,summary,key_points,action_items,created_at',
+      meeting_id: `in.${inFilter}`,
+      order: 'created_at.desc',
+    });
+
+    const response = await fetch(`${summariesEndpoint}?${params.toString()}`, {
+      method: 'GET',
+      headers: buildHeaders(),
+    });
+
+    const data = (await response.json()) as MeetingSummaryRow[] | { message?: string };
+
+    if (!response.ok || !Array.isArray(data)) {
+      throw new Error(getErrorMessage(data, 'بارگذاری خلاصه‌ها انجام نشد.'));
+    }
+
+    const latestByMeeting = new Map<string, MeetingSummary>();
+    for (const row of data) {
+      const parsed = toMeetingSummary(row);
+      if (!latestByMeeting.has(parsed.meetingId)) {
+        latestByMeeting.set(parsed.meetingId, parsed);
+      }
+    }
+
+    return Array.from(latestByMeeting.values());
+  },
+};

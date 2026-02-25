@@ -1,7 +1,7 @@
 import type { Meeting } from '../../features/meetings/models/meeting';
 
 export type AppStackParamList = {
-  MeetingsList: undefined;
+  HomeTabs: undefined;
   AddMeeting: undefined;
   MeetingDetail: {
     meeting: Meeting;
@@ -13,4 +13,10 @@ export type AppStackParamList = {
 
 export type AuthStackParamList = {
   Login: undefined;
+};
+
+export type HomeTabParamList = {
+  MeetingsList: undefined;
+  Analytics: undefined;
+  Settings: undefined;
 };

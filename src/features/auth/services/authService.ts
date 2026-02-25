@@ -108,3 +108,112 @@ export const signUpWithPassword = async (
 
   return toAuthUser(createdData[0]);
 };
+
+export const updateProfile = async (userId: string, name: string, email: string): Promise<AuthUser> => {
+  const trimmedName = name.trim();
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!trimmedName || !normalizedEmail) {
+    throw new Error('نام و ایمیل الزامی است.');
+  }
+
+  const existingResponse = await fetch(
+    `${usersEndpoint}?select=id,email&email=eq.${encodeURIComponent(normalizedEmail)}&limit=1`,
+    {
+      method: 'GET',
+      headers: buildHeaders(),
+    },
+  );
+
+  const existingData = (await existingResponse.json()) as Array<{ id: string | number; email: string }> | { message?: string };
+
+  if (!existingResponse.ok || !Array.isArray(existingData)) {
+    const message =
+      typeof existingData === 'object' && existingData && 'message' in existingData
+        ? existingData.message
+        : undefined;
+    throw new Error(message || 'به‌روزرسانی حساب انجام نشد.');
+  }
+
+  if (existingData.length > 0 && String(existingData[0].id) !== userId) {
+    throw new Error('این ایمیل قبلا ثبت شده است.');
+  }
+
+  const response = await fetch(`${usersEndpoint}?id=eq.${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    headers: buildHeaders(true),
+    body: JSON.stringify({
+      name: trimmedName,
+      email: normalizedEmail,
+    }),
+  });
+
+  const data = (await response.json()) as UserRow[] | { message?: string };
+
+  if (!response.ok || !Array.isArray(data) || data.length === 0) {
+    const message = typeof data === 'object' && data && 'message' in data ? data.message : undefined;
+    throw new Error(message || 'به‌روزرسانی حساب انجام نشد.');
+  }
+
+  return toAuthUser(data[0]);
+};
+
+export const changePassword = async (
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<void> => {
+  if (!currentPassword || !newPassword) {
+    throw new Error('رمز فعلی و رمز جدید الزامی است.');
+  }
+
+  const verifyResponse = await fetch(
+    `${usersEndpoint}?select=id&id=eq.${encodeURIComponent(userId)}&password=eq.${encodeURIComponent(currentPassword)}&limit=1`,
+    {
+      method: 'GET',
+      headers: buildHeaders(),
+    },
+  );
+
+  const verifyData = (await verifyResponse.json()) as Array<{ id: string | number }> | { message?: string };
+
+  if (!verifyResponse.ok || !Array.isArray(verifyData)) {
+    const message =
+      typeof verifyData === 'object' && verifyData && 'message' in verifyData ? verifyData.message : undefined;
+    throw new Error(message || 'تغییر رمز عبور انجام نشد.');
+  }
+
+  if (verifyData.length === 0) {
+    throw new Error('رمز عبور فعلی اشتباه است.');
+  }
+
+  const updateResponse = await fetch(`${usersEndpoint}?id=eq.${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    headers: buildHeaders(),
+    body: JSON.stringify({
+      password: newPassword,
+    }),
+  });
+
+  if (!updateResponse.ok) {
+    const payload = (await updateResponse.json()) as { message?: string };
+    throw new Error(payload.message || 'تغییر رمز عبور انجام نشد.');
+  }
+};
+
+export const deleteAccount = async (userId: string): Promise<void> => {
+  await fetch(`${supabaseUrl}/rest/v1/meetings?user_id=eq.${encodeURIComponent(userId)}`, {
+    method: 'DELETE',
+    headers: buildHeaders(),
+  });
+
+  const response = await fetch(`${usersEndpoint}?id=eq.${encodeURIComponent(userId)}`, {
+    method: 'DELETE',
+    headers: buildHeaders(),
+  });
+
+  if (!response.ok) {
+    const payload = (await response.json()) as { message?: string };
+    throw new Error(payload.message || 'حذف حساب انجام نشد.');
+  }
+};

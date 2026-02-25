@@ -1,19 +1,25 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
 
 import { MeetingsListScreen } from '../../features/meetings/screens/MeetingsListScreen';
 import { MeetingDetailScreen } from '../../features/meetings/screens/MeetingDetailScreen';
 import { AddMeetingScreen } from '../../features/meetings/screens/AddMeetingScreen';
 import { RecordingScreen } from '../../features/recording/screens/RecordingScreen';
 import { LoginScreen } from '../../features/auth/screens/LoginScreen';
+import { AnalyticsScreen } from '../../features/analytics/screens/AnalyticsScreen';
+import { SettingsScreen } from '../../features/settings/screens/SettingsScreen';
 import { useAuth } from '../../features/auth/context/AuthContext';
-import type { AppStackParamList, AuthStackParamList } from './types';
+import type { AppStackParamList, AuthStackParamList, HomeTabParamList } from './types';
 import { colors } from '../../shared/theme/colors';
 import { typography } from '../../shared/theme/typography';
 
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+const HomeTabs = createBottomTabNavigator<HomeTabParamList>();
 
 const sharedScreenOptions = {
   headerStyle: { backgroundColor: colors.background },
@@ -21,6 +27,65 @@ const sharedScreenOptions = {
   headerTitleStyle: { fontFamily: typography.bold },
   headerShadowVisible: false,
   contentStyle: { backgroundColor: colors.background },
+};
+
+const tabsScreenOptions = ({ route }: { route: { name: keyof HomeTabParamList } }) => ({
+  headerShown: false,
+  tabBarStyle: {
+    position: 'absolute' as const,
+    left: 14,
+    right: 14,
+    bottom: 14,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceElevated,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    height: 66,
+    paddingBottom: 8,
+    paddingTop: 7,
+    elevation: 8,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  tabBarLabelStyle: {
+    fontFamily: typography.bold,
+    fontSize: 11,
+  },
+  tabBarIcon: ({ color, size }: { color: string; size: number }) => {
+    const iconMap: Record<keyof HomeTabParamList, ComponentProps<typeof Ionicons>['name']> = {
+      MeetingsList: 'calendar-outline',
+      Analytics: 'stats-chart-outline',
+      Settings: 'settings-outline',
+    };
+
+    return <Ionicons name={iconMap[route.name]} size={size} color={color} />;
+  },
+  tabBarActiveTintColor: colors.accentDark,
+  tabBarInactiveTintColor: colors.textSecondary,
+});
+
+const HomeTabsNavigator = () => {
+  return (
+    <HomeTabs.Navigator screenOptions={tabsScreenOptions}>
+      <HomeTabs.Screen
+        name="MeetingsList"
+        component={MeetingsListScreen}
+        options={{ title: 'جلسه‌ها', tabBarLabel: 'جلسه‌ها' }}
+      />
+      <HomeTabs.Screen
+        name="Analytics"
+        component={AnalyticsScreen}
+        options={{ title: 'تحلیل', tabBarLabel: 'تحلیل' }}
+      />
+      <HomeTabs.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: 'تنظیمات', tabBarLabel: 'تنظیمات' }}
+      />
+    </HomeTabs.Navigator>
+  );
 };
 
 export const RootNavigator = () => {
@@ -39,9 +104,9 @@ export const RootNavigator = () => {
       {isLoggedIn ? (
         <AppStack.Navigator screenOptions={sharedScreenOptions}>
           <AppStack.Screen
-            name="MeetingsList"
-            component={MeetingsListScreen}
-            options={{ title: 'جلسه‌ها', headerShown: false }}
+            name="HomeTabs"
+            component={HomeTabsNavigator}
+            options={{ headerShown: false }}
           />
           <AppStack.Screen
             name="AddMeeting"

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,21 +13,39 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { CompositeScreenProps } from '@react-navigation/native';
 
 import { MeetingCard } from '../components/MeetingCard';
 import { useMeetings } from '../hooks/useMeetings';
 import { useAuth } from '../../auth/context/AuthContext';
-import type { AppStackParamList } from '../../../core/navigation/types';
+import type { AppStackParamList, HomeTabParamList } from '../../../core/navigation/types';
 import { CenteredState } from '../../../shared/components/CenteredState';
 import { colors } from '../../../shared/theme/colors';
 import { typography } from '../../../shared/theme/typography';
 import { manualMeetingsService } from '../services/manualMeetingsService';
+import { settingsService } from '../../settings/services/settingsService';
 
-type Props = NativeStackScreenProps<AppStackParamList, 'MeetingsList'>;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<HomeTabParamList, 'MeetingsList'>,
+  NativeStackScreenProps<AppStackParamList>
+>;
 
 export const MeetingsListScreen = ({ navigation }: Props) => {
   const { status, meetings, errorMessage, isRefreshing, refresh } = useMeetings();
   const { logout } = useAuth();
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
+  const [compactCardsEnabled, setCompactCardsEnabled] = useState(false);
+
+  useEffect(() => {
+    const loadAppSettings = async () => {
+      const appSettings = await settingsService.getAppSettings();
+      setAutoRefreshEnabled(appSettings.autoRefreshMeetings);
+      setCompactCardsEnabled(appSettings.compactCards);
+    };
+
+    void loadAppSettings();
+  }, []);
 
   const runDeleteMeeting = (meetingId: string) => {
     const remove = async () => {
@@ -63,8 +81,11 @@ export const MeetingsListScreen = ({ navigation }: Props) => {
 
   useFocusEffect(
     useCallback(() => {
+      if (!autoRefreshEnabled) {
+        return;
+      }
       void refresh();
-    }, [refresh]),
+    }, [autoRefreshEnabled, refresh]),
   );
 
   const emptyState = useMemo(() => {
@@ -165,6 +186,7 @@ export const MeetingsListScreen = ({ navigation }: Props) => {
           renderItem={({ item }) => (
             <MeetingCard
               meeting={item}
+              compact={compactCardsEnabled}
               onPress={(meeting) => navigation.navigate('MeetingDetail', { meeting })}
               onDeletePress={
                 item.source === 'manual'

@@ -2,7 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import type { AuthUser } from '../models/user';
-import { loginWithPassword, signUpWithPassword } from '../services/authService';
+import {
+  changePassword,
+  deleteAccount,
+  loginWithPassword,
+  signUpWithPassword,
+  updateProfile,
+} from '../services/authService';
 
 type AuthState = {
   isReady: boolean;
@@ -10,6 +16,9 @@ type AuthState = {
   user: AuthUser | null;
   signup: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  updateUserProfile: (name: string, email: string) => Promise<void>;
+  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  deleteUserAccount: () => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -51,6 +60,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await AsyncStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(authUser));
   }, []);
 
+  const updateUserProfile = useCallback(
+    async (name: string, email: string) => {
+      if (!user) {
+        throw new Error('کاربر وارد نشده است.');
+      }
+
+      const updated = await updateProfile(user.id, name, email);
+      setUser(updated);
+      await AsyncStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(updated));
+    },
+    [user],
+  );
+
+  const updateUserPassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      if (!user) {
+        throw new Error('کاربر وارد نشده است.');
+      }
+
+      await changePassword(user.id, currentPassword, newPassword);
+    },
+    [user],
+  );
+
+  const deleteUserAccount = useCallback(async () => {
+    if (!user) {
+      throw new Error('کاربر وارد نشده است.');
+    }
+
+    await deleteAccount(user.id);
+    setUser(null);
+    await AsyncStorage.removeItem(AUTH_USER_STORAGE_KEY);
+  }, [user]);
+
   const logout = useCallback(async () => {
     setUser(null);
     await AsyncStorage.removeItem(AUTH_USER_STORAGE_KEY);
@@ -63,9 +106,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user,
       signup,
       login,
+      updateUserProfile,
+      updateUserPassword,
+      deleteUserAccount,
       logout,
     }),
-    [isReady, user, signup, login, logout],
+    [isReady, user, signup, login, updateUserProfile, updateUserPassword, deleteUserAccount, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

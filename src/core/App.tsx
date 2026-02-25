@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 
 import { RootNavigator } from './navigation/RootNavigator';
 import { AuthProvider } from '../features/auth/context/AuthContext';
+import { AlarmReminderProvider } from '../features/settings/context/AlarmReminderProvider';
 
 if (!I18nManager.isRTL) {
   I18nManager.allowRTL(true);
@@ -24,8 +25,10 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar style="dark" />
-        <RootNavigator />
+        <AlarmReminderProvider>
+          <StatusBar style="dark" />
+          <RootNavigator />
+        </AlarmReminderProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

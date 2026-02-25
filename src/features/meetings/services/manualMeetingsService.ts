@@ -81,6 +81,27 @@ export const manualMeetingsService = {
     return data.map(toMeeting);
   },
 
+  async getAllMeetings(userId: string): Promise<Meeting[]> {
+    const params = new URLSearchParams({
+      select: 'id,user_id,title,location,notes,start_at,end_at',
+      user_id: `eq.${userId}`,
+      order: 'start_at.asc',
+    });
+
+    const response = await fetch(`${meetingsEndpoint}?${params.toString()}`, {
+      method: 'GET',
+      headers: buildHeaders(),
+    });
+
+    const data = (await response.json()) as MeetingRow[] | { message?: string };
+
+    if (!response.ok || !Array.isArray(data)) {
+      throw new Error(getErrorMessage(data, 'بارگذاری جلسه‌ها انجام نشد.'));
+    }
+
+    return data.map(toMeeting);
+  },
+
   async addMeeting(input: ManualMeetingInput): Promise<Meeting> {
     const response = await fetch(meetingsEndpoint, {
       method: 'POST',

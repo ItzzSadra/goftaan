@@ -9,11 +9,15 @@ type MeetingCardProps = {
   meeting: Meeting;
   onPress: (meeting: Meeting) => void;
   onDeletePress?: (meeting: Meeting) => void;
+  compact?: boolean;
 };
 
-export const MeetingCard = ({ meeting, onPress, onDeletePress }: MeetingCardProps) => {
+export const MeetingCard = ({ meeting, onPress, onDeletePress, compact = false }: MeetingCardProps) => {
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]} onPress={() => onPress(meeting)}>
+    <Pressable
+      style={({ pressed }) => [styles.card, compact ? styles.compactCard : null, pressed ? styles.cardPressed : null]}
+      onPress={() => onPress(meeting)}
+    >
       <View style={styles.accentBar} />
       <View style={styles.row}>
         <Text style={styles.title}>{meeting.title}</Text>
@@ -63,6 +67,10 @@ const styles = StyleSheet.create({
         boxShadow: '0px 8px 16px rgba(13, 26, 20, 0.08)',
       },
     }),
+  },
+  compactCard: {
+    padding: 12,
+    gap: 7,
   },
   cardPressed: {
     transform: [{ scale: 0.985 }],

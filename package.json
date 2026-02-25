@@ -12,7 +12,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "^2.1.1",
+    "@react-navigation/bottom-tabs": "^7.14.0",
     "@react-navigation/native": "^7.0.6",
     "@react-navigation/native-stack": "^7.1.0",
     "expo": "~54.0.0",
