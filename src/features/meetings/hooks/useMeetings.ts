@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Meeting } from '../models/meeting';
 import { calendarService } from '../services/calendarService';
 import { manualMeetingsService } from '../services/manualMeetingsService';
-import { isDesktopWeb } from '../../../shared/utils/platform';
+import { isDesktopWeb } from '../../../utils/platform';
 import { useAuth } from '../../auth/context/AuthContext';
 
 type Status = 'idle' | 'loading' | 'ready' | 'permissionDenied' | 'error';

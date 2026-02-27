@@ -6,9 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../auth/context/AuthContext';
 import type { Meeting } from '../../meetings/models/meeting';
 import { manualMeetingsService } from '../../meetings/services/manualMeetingsService';
-import { formatMeetingTime } from '../../../shared/utils/date';
-import { colors } from '../../../shared/theme/colors';
-import { typography } from '../../../shared/theme/typography';
+import { formatMeetingTime } from '../../../utils/date';
+import { colors } from '../../../theme/colors';
+import { typography } from '../../../theme/typography';
 import { settingsService } from '../services/settingsService';
 
 const CHECK_INTERVAL_MS = 20_000;

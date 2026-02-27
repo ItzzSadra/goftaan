@@ -1,9 +1,9 @@
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Meeting } from '../models/meeting';
-import { formatMeetingTime } from '../../../shared/utils/date';
-import { colors } from '../../../shared/theme/colors';
-import { typography } from '../../../shared/theme/typography';
+import { formatMeetingTime } from '../../../utils/date';
+import { colors } from '../../../theme/colors';
+import { typography } from '../../../theme/typography';
 
 type MeetingCardProps = {
   meeting: Meeting;
